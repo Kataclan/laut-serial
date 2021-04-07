@@ -1,0 +1,12 @@
+{
+  "name": "LautSerial",
+  "displayName": "LautSerial",
+  "expo": {
+    "name": "LautSerial",
+    "slug": "LautSerial",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
