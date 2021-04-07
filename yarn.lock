@@ -6722,6 +6722,11 @@ react-native-gesture-handler@~1.8.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-nfc-manager@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-nfc-manager/-/react-native-nfc-manager-3.2.1.tgz#b71089e43e0e81715de48e0369ee955ffdbed298"
+  integrity sha512-ZMRHv0/plb2yR15+xX2RmdRCK84X0YX0kt+uFE8Fus9wIf4wMuEdciXl3camfMCRqplL0TAz+v2L6+Uoneuzjw==
+
 react-native-reanimated@~1.13.0:
   version "1.13.3"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.13.3.tgz#fb0e1d582c8866015140f2159e147ffe6e798a3a"
