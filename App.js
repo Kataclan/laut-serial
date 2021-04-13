@@ -26,7 +26,12 @@ const App = ({}) => {
         }}
         style={{ width: 200, height: 200, alignSelf: "center" }}
       />
-      <Button title="SCAN SERIAL" onPress={readTag}></Button>
+      <Button
+        title="SCAN SERIAL"
+        color="#002bfe"
+        style={{ width: 200 }}
+        onPress={readTag}
+      ></Button>
 
       {tag && (
         <Text style={{ color: "#ffffff", marginTop: 50, alignSelf: "center" }}>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "375184941725",
+    "project_id": "laut-serial",
+    "storage_bucket": "laut-serial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375184941725:android:a82c400b259efa480caa74",
+        "android_client_info": {
+          "package_name": "com.lautserial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375184941725-1ftlq4jmj1q0kv967sjk54ldrp45b76l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2Nmnb_yQXNwHJ75vBraKIZ08XPdWLhnI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375184941725-1ftlq4jmj1q0kv967sjk54ldrp45b76l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
