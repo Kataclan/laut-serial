@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, Text, TouchableOpacity, ToastAndroid } from "react-native";
+import { View, Image, Text, TouchableOpacity, ToastAndroid, ActivityIndicator, TextInput } from "react-native";
 import firestore from '@react-native-firebase/firestore';
 import useNFCManager from "./src/hooks/useNFCManager";
+import Animated from "react-native-reanimated";
 
 const App = ({}) => {
   const usersCollection = firestore().collection('users');
   const entriesCollection = firestore().collection('entries');
   const [reading, setReading] = useState(false);
+  const [dni, setDni] = useState("");
+  const [manual, setManual] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const { tag, initNFC, readNFC } = useNFCManager();
   
 
   const readTag = async () => {
-    const snapshot = await usersCollection.get();
-    snapshot.docs.forEach(doc => console.log(doc.data()));
     initNFC();
     readNFC();
     setReading(true);
@@ -54,6 +55,18 @@ const App = ({}) => {
     ToastAndroid.show("Usuario registrado correctamente", ToastAndroid.SHORT);
   }
 
+  const getUserByDni = async (dni) => {
+    try{
+      console.log(dni);
+      const query = await usersCollection.where("serial_id", "==", "3");
+      console.log(query.docs[0].data());
+      setUser(data);
+    } catch (e){
+       setError('USUARIO NO ENCONTRADO');
+    }
+    setManual(false);
+  };
+
   return (
     <View
       style={{
@@ -75,6 +88,54 @@ const App = ({}) => {
         style={{ width: 200, height: 200, alignSelf: "center" }}
       />
       {
+        manual ? <View style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+          <TextInput style={{ width: 300, display: "flex", color: "black", backgroundColor: "white"}} placeholder="DNI" value={dni} onChangeText={setDni} />
+          <TouchableOpacity
+            style={{
+              display: 'flex',
+              flex: 0,
+              width: 300,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#002bfe',
+              padding: 25,
+              marginTop: 200,
+              borderRadius: 5,
+            }}
+            onPress={() => { usersCollection.where('dni', '==', dni)
+              .get().then(function(querySnapshot) {
+                  if (querySnapshot.size > 0) {
+                    // Contents of first document
+                    setUser(querySnapshot.docs[0].data());
+                  } else {
+                    console.log("No such document!");
+                  }
+                  setManual(false);
+                })
+                .catch(function(error) {
+                  console.log("Error getting document: ", error);
+                  setManual(false);
+                }); 
+              }}>
+            <Text style={{ fontSize: 18, color: "#ffffff"}}>BUSCAR</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+              style={{
+                display: 'flex',
+                flex: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#b04867',
+                padding: 25,
+                marginTop: 40,
+                borderRadius: 5,
+                width: 300,
+              }}
+              onPress={() => { setManual(false)}}>
+              <Text style={{ fontSize: 18, color: "#ffffff"}}>CANCELAR</Text>
+            </TouchableOpacity>
+        </View>
+        :
         user !== null ? <View style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
           <Text style={{ color: "#ffffff", marginTop: 50, alignSelf: "center",  fontSize: 25 }}>
               SERIAL ID: {user.serial_id}
@@ -110,39 +171,45 @@ const App = ({}) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#ffffff',
+                backgroundColor: '#b04867',
                 padding: 10,
               }}
               onPress={() => {setUser(null)}}>
-              <Text style={{color: "#000000"}}>RECHAZAR USUARIO</Text>
+              <Text style={{color: "#ffffff", fontWeight: "bold"}}>RECHAZAR USUARIO</Text>
             </TouchableOpacity>
           </View>
         </View> :
         reading ?  
           <View style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Text style={{ color: "#ffffff", alignSelf: "center", fontSize: 25 }}>
-              LEYENDO TARJETA...
+              ACERCA LA TARJETA
             </Text>
+            <ActivityIndicator style={{ marginTop: 50}} color="#ffffff" size={50}/>
             <TouchableOpacity
               style={{
                 display: 'flex',
+                flex: 0,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#002bfe',
+                backgroundColor: '#b04867',
                 padding: 25,
                 marginTop: 100,
                 borderRadius: 5,
+                width: 300,
               }}
               onPress={() => { setReading(false)}}>
               <Text style={{ fontSize: 18, color: "#ffffff"}}>CANCELAR LECTURA</Text>
             </TouchableOpacity>
           </View> 
         :
+
         <View style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
           {error && <Text style={{ marginTop: 100, color: "red", fontSize: 25}}>{error}</Text>}
           <TouchableOpacity
             style={{
               display: 'flex',
+              flex: 0,
+              width: 300,
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: '#002bfe',
@@ -152,6 +219,21 @@ const App = ({}) => {
             }}
             onPress={readTag}>
             <Text style={{ fontSize: 18, color: "#ffffff"}}>LEER TARJETA</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              display: 'flex',
+              flex: 0,
+              width: 300,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#002bfe',
+              padding: 25,
+              marginTop: 40,
+              borderRadius: 5,
+            }}
+            onPress={() => { setManual(true); }}>
+            <Text style={{ fontSize: 18, color: "#ffffff"}}>BUSCAR MIEMBRO</Text>
           </TouchableOpacity>
         </View>
       }
