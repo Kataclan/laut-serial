@@ -9,15 +9,12 @@ export default () => {
   };
 
   const readNFC = () => {
-    let tagFound;
-
     const cleanUp = () => {
       NfcManager.setEventListener(NfcEvents.DiscoverTag, null);
       NfcManager.setEventListener(NfcEvents.SessionClosed, null);
     };
 
     NfcManager.setEventListener(NfcEvents.DiscoverTag, (tag) => {
-      tagFound = tag;
       console.log("NFC Tag Readed: ", tag);
       setTag(tag);
       NfcManager.unregisterTagEvent().catch(() => 0);
