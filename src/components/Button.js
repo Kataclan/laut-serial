@@ -12,9 +12,22 @@ const Button = ({
   icon,
   iconColor,
   iconSize,
+  contained,
 }) => (
-  <TouchableOpacity style={touchableStyle} onPress={onPress}>
-    <View style={viewStyle}>
+  <TouchableOpacity
+    style={{
+      width: 250,
+      padding: 20,
+      ...touchableStyle,
+    }}
+    onPress={onPress}
+  >
+    <View
+      style={{
+        border: contained ? "1px solid white" : "",
+        ...viewStyle,
+      }}
+    >
       {icon && (
         <Ionicons
           name={icon}

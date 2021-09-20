@@ -1,3 +1,4 @@
+import { useNetInfo } from "@react-native-community/netinfo";
 import { DateTime } from "luxon";
 import { useEffect } from "react";
 import { ToastAndroid } from "react-native";
@@ -22,11 +23,15 @@ const diffHoursFromToday = (date) => {
 };
 
 const appStates = {
+  init: "init",
   start: "start",
   reading: "reading",
   manualRegistration: "manual",
   verifying: "verifying",
   error: "error",
+  fetching: "fetching",
+  registering: "registering",
+  disconnected: "notConnected",
 };
 
 const successMsgs = {
@@ -42,7 +47,7 @@ const errorMsgs = {
 };
 
 const initialState = {
-  appState: appStates.start,
+  appState: appStates.init,
   dni: "",
   user: null,
 };
@@ -53,7 +58,7 @@ const showToast = (msg) => {
     ToastAndroid.LONG,
     ToastAndroid.TOP,
     0,
-    500
+    300
   );
 };
 
@@ -66,6 +71,7 @@ export default () => {
     addUserEntry,
   } = useFirestore();
   const [state, setState] = useSetState(initialState);
+  const { isConnected } = useNetInfo();
 
   const reset = () => {
     setState({ user: null, dni: "", appState: appStates.start });
@@ -74,6 +80,7 @@ export default () => {
   useEffect(() => {
     // When tag changes, get user by tag
     const findUser = async (_tag) => {
+      setState({ appState: appStates.fetching });
       if (_tag) {
         const user = await findUserByNFCTag(_tag.id);
         if (!user) {
@@ -96,6 +103,15 @@ export default () => {
     findUser(tag);
   }, [tag]);
 
+  useEffect(() => {
+    console.log("Is connected:", isConnected);
+    if (isConnected && state.appState === appStates.disconnected) {
+      reset();
+    } else if (!isConnected && state.appState !== appStates.disconnected) {
+      setState({ user: null, dni: "", appState: appStates.disconnected });
+    }
+  }, [isConnected]);
+
   const readCard = async () => {
     initNFC();
     readNFC();
@@ -103,6 +119,7 @@ export default () => {
   };
 
   const getUserByDNI = async () => {
+    setState({ appState: appStates.fetching });
     try {
       const user = await findUserByDni(state.dni);
       if (!user) {
@@ -127,6 +144,7 @@ export default () => {
   };
 
   const acceptUser = async () => {
+    setState({ appState: appStates.registering });
     try {
       await addUserEntry(state.user);
       showToast(successMsgs.entryAdded);

@@ -1,8 +1,39 @@
 import React from "react";
+import propTypes from "prop-types";
 import { View, Image, Text, ActivityIndicator, TextInput } from "react-native";
 import useAppState from "./src/hooks/useAppState";
 import Button from "./src/components/Button";
 import LautLogo from "./src/img/laut_main.png";
+
+const AppHeader = ({ children }) => (
+  <View style={{ display: "flex" }}>{children}</View>
+);
+const AppBody = ({ children }) => (
+  <View
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      flexGrow: 1,
+      alignItems: "center",
+    }}
+  >
+    {children}
+  </View>
+);
+
+AppHeader.defaultProps = {
+  children: null,
+};
+AppHeader.propTypes = {
+  children: propTypes.node,
+};
+
+AppBody.defaultProps = {
+  children: null,
+};
+AppBody.propTypes = {
+  children: propTypes.node,
+};
 
 const App = () => {
   const {
@@ -23,25 +54,45 @@ const App = () => {
 
   const view = () => {
     switch (appState) {
+      case appStates.init:
+        return (
+          <View
+            style={{
+              display: "flex",
+              flexGrow: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{ color: "#ffffff", alignSelf: "center", fontSize: 25 }}
+            >
+              INICIANDO
+            </Text>
+            <ActivityIndicator
+              style={{ marginTop: 50 }}
+              color="#ffffff"
+              size={50}
+            />
+          </View>
+        );
       case appStates.start:
         return (
           <View
             style={{
               display: "flex",
+              flexGrow: 1,
+              justifyContent: "flex-end",
               alignItems: "center",
-              justifyContent: "center",
+              paddingBottom: 60,
             }}
           >
             <Button
               touchableStyle={{
                 display: "flex",
-                flex: 0,
-                width: 250,
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#002bfe",
-                padding: 25,
-                marginTop: 100,
                 borderRadius: 5,
               }}
               onPress={onClickReadCard}
@@ -57,15 +108,13 @@ const App = () => {
               textStyle={{ fontSize: 18, color: "#ffffff" }}
             />
             <Button
+              contained={true}
               touchableStyle={{
                 display: "flex",
-                flex: 0,
-                width: "100%",
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "black",
-                padding: 25,
-                marginTop: 40,
+                marginTop: 20,
                 borderRadius: 5,
               }}
               onPress={() => {
@@ -90,6 +139,7 @@ const App = () => {
           <View
             style={{
               display: "flex",
+              flexGrow: 1,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -108,12 +158,10 @@ const App = () => {
               touchableStyle={{
                 display: "flex",
                 flex: 0,
-                width: "100%",
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#b04867",
-                padding: 25,
-                marginTop: 40,
+                marginTop: 50,
                 borderRadius: 5,
               }}
               onPress={resetAppState}
@@ -130,14 +178,92 @@ const App = () => {
             />
           </View>
         );
+      case appStates.disconnected:
+        return (
+          <View
+            style={{
+              display: "flex",
+              flexGrow: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "red",
+                alignSelf: "center",
+                fontSize: 25,
+                textAlign: "center",
+                paddingRight: 10,
+                paddingLeft: 10,
+              }}
+            >
+              No hay conexión a internet
+            </Text>
+          </View>
+        );
+
+      case appStates.registering:
+      case appStates.fetching:
+        return (
+          <View
+            style={{
+              display: "flex",
+              flexGrow: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{ color: "#ffffff", alignSelf: "center", fontSize: 25 }}
+            >
+              {appState === appStates.fetching
+                ? "COMPROBANDO DATOS"
+                : "REGISTRANDO USUARIO"}
+            </Text>
+            <ActivityIndicator
+              style={{ marginTop: 50 }}
+              color="#ffffff"
+              size={50}
+            />
+            <Button
+              contained={true}
+              touchableStyle={{
+                display: "flex",
+                flex: 0,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#b04867",
+                marginTop: 50,
+                borderRadius: 5,
+              }}
+              onPress={resetAppState}
+              viewStyle={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+              icon="md-close"
+              iconColor="white"
+              iconSize={18}
+              text={
+                appState === appState.fetching
+                  ? "CANCELAR LECTURA"
+                  : "CANCELAR REGISTRO"
+              }
+              textStyle={{ fontSize: 18, color: "#ffffff" }}
+            />
+          </View>
+        );
 
       case appStates.manualRegistration:
         return (
           <View
             style={{
               display: "flex",
+              flexGrow: 1,
+              paddingBottom: 60,
               alignItems: "center",
-              justifyContent: "center",
             }}
           >
             <Text style={{ fontSize: 18, color: "#ffffff", marginBottom: 20 }}>
@@ -156,15 +282,15 @@ const App = () => {
                 setAppState({ dni: text });
               }}
             />
+
+            <View style={{ display: "flex", flexGrow: 1 }} />
             <Button
               touchableStyle={{
                 display: "flex",
                 flex: 0,
-                width: 250,
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#002bfe",
-                padding: 25,
                 marginTop: 50,
                 borderRadius: 5,
               }}
@@ -181,15 +307,14 @@ const App = () => {
               textStyle={{ fontSize: 18, color: "#ffffff" }}
             />
             <Button
+              contained={true}
               touchableStyle={{
                 display: "flex",
                 flex: 0,
-                width: "100%",
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "black",
-                padding: 25,
-                marginTop: 40,
+                marginTop: 20,
                 borderRadius: 5,
               }}
               onPress={resetAppState}
@@ -210,14 +335,14 @@ const App = () => {
           <View
             style={{
               display: "flex",
+              flexGrow: 1,
+              paddingBottom: 60,
               alignItems: "center",
-              justifyContent: "center",
             }}
           >
             <Text
               style={{
                 color: "#ffffff",
-                marginTop: 10,
                 alignSelf: "center",
                 fontSize: 25,
               }}
@@ -227,7 +352,7 @@ const App = () => {
             <Text
               style={{
                 color: "#ffffff",
-                marginTop: 50,
+                marginTop: 20,
                 alignSelf: "center",
                 fontSize: 25,
               }}
@@ -237,23 +362,23 @@ const App = () => {
             <Text
               style={{
                 color: "#ffffff",
-                marginTop: 50,
+                marginTop: 20,
                 alignSelf: "center",
                 fontSize: 25,
               }}
             >
               NOMBRE: {user.name}
             </Text>
+
+            <View style={{ display: "flex", flexGrow: 1 }} />
             <Button
               touchableStyle={{
                 display: "flex",
-                flex: 0,
-                width: 250,
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#6fbf73",
-                padding: 25,
-                marginTop: 50,
+                alignSelf: "flex-end",
+                marginTop: 20,
                 borderRadius: 5,
               }}
               onPress={acceptUser}
@@ -269,15 +394,14 @@ const App = () => {
               textStyle={{ fontSize: 18, color: "#ffffff" }}
             />
             <Button
+              contained={true}
               touchableStyle={{
                 display: "flex",
-                flex: 0,
-                width: 250,
+                alignSelf: "flex-end",
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#b04867",
-                padding: 25,
-                marginTop: 40,
+                marginTop: 20,
                 borderRadius: 5,
               }}
               onPress={resetAppState}
@@ -302,19 +426,18 @@ const App = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        padding: 20,
-        paddingBottom: 200,
+        flex: 1,
         backgroundColor: "black",
-        width: "100%",
-        height: "100%",
+        justifyContent: "space-around",
       }}
     >
-      <Image
-        source={LautLogo}
-        style={{ width: 200, height: 200, alignSelf: "center" }}
-      />
-      {view()}
+      <AppHeader>
+        <Image
+          source={LautLogo}
+          style={{ width: 200, height: 200, alignSelf: "center" }}
+        />
+      </AppHeader>
+      <AppBody>{view()}</AppBody>
     </View>
   );
 };
